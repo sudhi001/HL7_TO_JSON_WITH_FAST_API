@@ -34,7 +34,7 @@ class HL7Utils:
             field_name = segment_type + '.' + str(i)
              # Add the field data to the JSON object.
             if field != ' ' and field != '':
-              json_segment[field_name] = field
+              json_segment[field_name.strip()] = field
               if field_name == 'MSH.1':
                 continue
               subsegment_values = field.split('^')
@@ -42,17 +42,17 @@ class HL7Utils:
                 for j, subfieldValue in enumerate(subsegment_values):
                   field_name = segment_type + '.'+ str(i) +  '.' + str(j+1)
                   if subfieldValue != ' ' and subfieldValue != '':
-                    json_segment[field_name] = subfieldValue
+                    json_segment[field_name.strip()] = subfieldValue
                     sub_subsegment_values = subfieldValue.split('~')
                     if len(sub_subsegment_values) >1:
                       for k, second_subfieldValue in enumerate(sub_subsegment_values):
                         field_name = segment_type + '.'+ str(i) +  '.' + str(j)+  '.' + str(k+1)
                         if second_subfieldValue != ' ' and second_subfieldValue != '':
-                          json_segment[field_name] = second_subfieldValue
+                          json_segment[field_name.strip()] = second_subfieldValue
 
            
           # Add the JSON segment to the JSON message.
-          json_message[segment_type] = json_segment
+          json_message[segment_type.strip()] = json_segment
 
         # Return the JSON message.
         return json.dumps(json_message)
