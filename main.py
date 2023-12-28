@@ -6,6 +6,7 @@ from src.hl7  import HL7Utils
 
 app = FastAPI()
 templates = Jinja2Templates(directory="templates")
+parser = HL7Utils()
 
 @app.get("/", response_class=HTMLResponse)
 async def root(request: Request):
@@ -16,6 +17,7 @@ async def root(request: Request):
 
 @app.post("/convert/hl7/json")
 def convert_hl7_to_json(data: dict):
-     json_message = HL7Utils().parse(data.get("message"))
-     return json_message
+     json_message =  parser.parse(data.get("message"))
+     detaild= parser.detailed(json_message)
+     return {"original":json_message,"detailed":detaild}
 

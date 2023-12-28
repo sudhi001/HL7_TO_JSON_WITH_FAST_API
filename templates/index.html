@@ -20,7 +20,10 @@
     </form>
     <div class="mt-8 mb-12">
       <h2 class="text-2xl font-bold">Encoded Output:</h2>
-      <pre id="json-output"> </pre>
+      <div class="flex grid  lg:grid-cols-2">
+        <pre id="json-output"> </pre>
+        <pre id="json-output-detailed"> </pre>
+      </div>
     </div>
   </div>
 
@@ -46,6 +49,8 @@
     const form = document.getElementById('form');
     const hl7MessageInput = document.getElementById('hl7-message');
     const jsonOutput = document.getElementById('json-output');
+    const jsonOutputDetailed = document.getElementById('json-output-detailed');
+    
     form.addEventListener('submit', (event) => {
       event.preventDefault();
       const hl7Message = hl7MessageInput.value;
@@ -61,7 +66,8 @@
       })
         .then((response) => response.json())
         .then((data) => {
-          jsonOutput.textContent = JSON.stringify(data, null, 2).replace(/,/g, ',\n').replace(/\\/g, ""); 
+          jsonOutput.textContent = JSON.stringify(data.original, null, 2); 
+          jsonOutputDetailed.textContent = JSON.stringify(data.detailed, null, 2); 
         })
         .catch((error) => {
           alert(`Error converting HL7 message: ${error}`);
