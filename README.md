@@ -4,6 +4,10 @@
 
 The purpose of this application is to provide developers and beginners with a secure way to parse HL7 messages. Using other online tools for real data validation might lead to HIPAA violations and compromise data security. This open-source application aims to address these concerns by allowing users to host and run the application in their own environment.
 
+
+NOT: I am not used any hl7 parser to do this and this is an one hour simple work for my qurick parser.
+
+
 ## Features
 
 - Parse HL7 messages securely.
@@ -46,6 +50,9 @@ The purpose of this application is to provide developers and beginners with a se
 
 ## Note
 
+- **About the Parser:**
+  This HL7 to JSON parser was developed without using any existing HL7 parser. It's a quick one-hour project to provide a simple solution for parsing HL7 messages securely.
+
 - Ensure that you have the latest version of Python installed (minimum Python 3.11).
 
 - While the application is hosted on a server, it's open-source, and no information is saved or logged on the server. If you still have security concerns, you have the option to run the application in your environment.
@@ -58,4 +65,7 @@ Hi, I'm Sudhi S., the creator of this HL7 to JSON parser. If you have any questi
 - GitHub: [sudhi001](https://github.com/sudhi001)
 
 Happy coding!
+
+
+
 
