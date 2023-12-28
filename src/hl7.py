@@ -40,13 +40,13 @@ class HL7Utils:
               subsegment_values = field.split('^')
               if len(subsegment_values) >1:
                 for j, subfieldValue in enumerate(subsegment_values):
-                  field_name = field_name +  '.' + str(j+1)
+                  field_name = segment_type + '.'+ str(i) +  '.' + str(j+1)
                   if subfieldValue != ' ' and subfieldValue != '':
                     json_segment[field_name] = subfieldValue
                     sub_subsegment_values = subfieldValue.split('~')
                     if len(sub_subsegment_values) >1:
                       for k, second_subfieldValue in enumerate(sub_subsegment_values):
-                        field_name = field_name +  '.' + str(k+1)
+                        field_name = segment_type + '.'+ str(i) +  '.' + str(j)+  '.' + str(k+1)
                         if second_subfieldValue != ' ' and second_subfieldValue != '':
                           json_segment[field_name] = second_subfieldValue
 
