@@ -1,4 +1,6 @@
 import json
+from .msh import MSH
+from .pid import PID
 
 class HL7Utils:
   def __init__(self):
@@ -61,95 +63,10 @@ class HL7Utils:
         # Return the JSON message.
         return json_message
   
-  def msh_details(self, json_data):
-    msh_map = {
-          "MSH.1": "Field Separator",
-          "MSH.2": "Encoding Characters",
-          "MSH.3": "Sending Application",
-          "MSH.4": "Sending Facility",
-          "MSH.5": "Receiving Application",
-          "MSH.6": "Receiving Facility",
-          "MSH.7": "Date / Time of Message",
-          "MSH.8": "Security",
-          "MSH.9": "Message Type",
-          "MSH.10": "Message Control ID",
-          "MSH.11": "Processing ID",
-          "MSH.12": "Version ID",
-          "MSH.13": "Sequence Number",
-          "MSH.14": "Continuation Pointer",
-          "MSH.15": "Accept Acknowledgement Type",
-          "MSH.16": "Application Acknowledgement Type",
-          "MSH.17": "Country Code",
-          "MSH.18": "Character Set",
-          "MSH.19": "Principal Language of Message"
-      }
-    msh_value = json_data.get("MSH")
-    msh_data = {}
-    if msh_value:
-          for key in msh_map:
-              if key in msh_value:
-                  msh_data[msh_map[key]] = msh_value[key]
-    return msh_data
-
-  def pid_details(self, json_data):
-      pid_map= {
-        "PID.1": "Set ID - Patient ID",
-        "PID.2": "Patient ID (External ID)",
-        "PID.3": "Patient ID (Internal ID)",
-        "PID.4": "Alternate Patient ID",
-        "PID.5": "Patient Name",
-        "PID.5.1":"Family Name",
-        "PID.5.2":"Given Name",
-        "PID.5.3":"Middle Initial Or Name",
-        "PID.5.4":"Suffix",
-        "PID.5.5":"Prefix",
-        "PID.5.6":"Degree",
-        "PID.5.7":"Name Type Code",
-        "PID.5.8":"Name Representation Code",
-        "PID.6": "Mother's Maiden Name",
-        "PID.7": "Date of Birth",
-        "PID.8": "Sex",
-        "PID.9": "Patient Alias",
-        "PID.10": "Race",
-        "PID.11": "Patient Address",
-        "PID.12": "County Code",
-        "PID.13": "Phone Number - Home",
-        "PID.14": "Phone Number - Business",
-        "PID.15": "Primary Language",
-        "PID.16": "Marital Status",
-        "PID.17": "Religion",
-        "PID.18": "Patient Account Number",
-        "PID.19": "SSN Number - Patient",
-        "PID.20": "Driver's License Number",
-        "PID.21": "Mother's Identifier",
-        "PID.22": "Ethnic Group",
-        "PID.23": "Birth Place",
-        "PID.24": "Multiple Birth Indicator",
-        "PID.25": "Birth Order",
-        "PID.26": "Citizenship",
-        "PID.26.1": "Citizenship Identifier",
-        "PID.26.2": "Citizenship Text",
-        "PID.26.3": "Citizenship Name Of Coding System",
-        "PID.26.4": "Citizenship Alternate Components",
-         "PID.26.5": "Citizenship Alternate Text",
-         "PID.26.6": "Citizenship  Name Of Alternate Coding System",
-        "PID.27": "Veterans Military Status",
-        "PID.28": "Nationality Code",
-        "PID.29": "Patient Death Date and Time",
-        "PID.30": "Patient Death Indicator"
-      }
-
-      pid_value = json_data.get("PID")
-      pid_data = {}
-      if pid_value:
-        for key in pid_map:
-            if key in pid_value:
-               pid_data[pid_map[key]] = pid_value[key]
-      return pid_data
 
 
   def detailed(self, json_data):
-      msh_data = self.msh_details(json_data)
-      pid_data = self.pid_details(json_data)
+      msh_data = MSH().parse(json_data)
+      pid_data = PID().parse(json_data)
       return {"MSH":msh_data,"PID":pid_data}
 
