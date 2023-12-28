@@ -5,8 +5,6 @@
 The purpose of this application is to provide developers and beginners with a secure way to parse HL7 messages. Using other online tools for real data validation might lead to HIPAA violations and compromise data security. This open-source application aims to address these concerns by allowing users to host and run the application in their own environment.
 
 
-NOT: I am not used any hl7 parser to do this and this is an one hour simple work for my qurick parser.
-
 
 ## Features
 
