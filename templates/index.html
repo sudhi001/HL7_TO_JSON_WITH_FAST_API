@@ -3,77 +3,79 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>HL7 Message Parser</title>
-  <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet" />
+  <!-- Self-hosted: no third-party requests, and the page works offline. -->
+  <link rel="stylesheet" href="/static/app.css" />
 </head>
 
 <body>
-  <div class="container mx-auto">
-    <h1 class="text-3xl font-bold mt-4">HL7 Message Parser</h1>
-    <form action="/" method="post" class="flex flex-col gap-4 mt-8" id="form">
-      <label for="hl7-message" class="block">HL7 Message:</label>
-      <textarea name="hl7-message" id="hl7-message" rows="10"
-        class="w-full border border-gray-300 rounded-md p-2"></textarea>
+  <div class="wrap">
+    <header>
+      <h1>HL7 Message Parser</h1>
+      <p>
+        Runs entirely on this server. Your message is not stored, logged, or sent anywhere &mdash;
+        including to your own browser's storage.
+      </p>
+    </header>
 
-      <button type="submit"
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md">Convert</button>
-    </form>
-    <div class="mt-8 mb-12">
-      <h2 class="text-2xl font-bold">Encoded Output:</h2>
-      <div class="flex grid  lg:grid-cols-2">
-        <pre id="json-output"> </pre>
-        <pre id="json-output-detailed"> </pre>
+    <form id="form" class="card">
+      <div class="sample-row">
+        <div>
+          <label for="sample">Start from a sample</label>
+          <select id="sample">
+            <option value="">Choose a sample message&hellip;</option>
+          </select>
+          <p class="hint">Real message types first, then edge cases that exercise the tricky parts of the spec.</p>
+        </div>
       </div>
+
+      <label for="hl7-message">HL7 message</label>
+      <textarea id="hl7-message" spellcheck="false" autocomplete="off"
+        placeholder="Paste an HL7 v2 message here, or choose a sample above."></textarea>
+
+      <div class="controls">
+        <button type="submit" id="convert" class="primary">Parse</button>
+        <button type="button" id="clear" class="secondary">Clear</button>
+        <span id="status" class="status" role="status" aria-live="polite"></span>
+      </div>
+    </form>
+
+    <div id="error" class="banner error hidden" role="alert" aria-live="assertive"></div>
+
+    <div id="meta" class="meta"></div>
+    <div id="diagnostics" class="diagnostics" aria-live="polite"></div>
+
+    <div class="panes">
+      <section class="pane">
+        <div class="pane-head">
+          <h2>Fields</h2>
+          <span class="hint">names and decoded values from the HL7 spec</span>
+        </div>
+        <div id="out-fields" aria-live="polite"></div>
+      </section>
+
+      <section class="pane">
+        <div class="pane-head">
+          <div class="tabs" role="tablist">
+            <button class="tab" id="tab-canonical" role="tab" aria-selected="true" type="button">Canonical</button>
+            <button class="tab" id="tab-simple" role="tab" aria-selected="false" type="button">Simple</button>
+          </div>
+          <button class="copy" data-target="out-json" type="button">Copy</button>
+        </div>
+        <pre id="out-json" aria-live="polite"></pre>
+      </section>
     </div>
+
+    <footer>
+      <p>
+        Parsed locally &mdash; no data leaves this server.
+        See <a href="/docs">the API docs</a> for programmatic use.
+      </p>
+    </footer>
   </div>
 
-  <script>
-    function retrieveHL7MessageFromCache() {
-        caches.open("hl7-message-cache").then(function(cache) {
-            cache.match("hl7-message").then(function(response) {
-            if (response) {
-                response.text().then(function(hl7Message) {
-                var hl7MessageElement = document.getElementById("hl7-message");
-                hl7MessageElement.innerHTML = hl7Message;
-                });
-            } else {
-                console.log("HL7 message not found in cache.");
-            }
-            });
-        });
-        }
-    window.addEventListener("load", function() {
-        // Retrieve the HL7 message from the cache
-             retrieveHL7MessageFromCache();
-        });
-    const form = document.getElementById('form');
-    const hl7MessageInput = document.getElementById('hl7-message');
-    const jsonOutput = document.getElementById('json-output');
-    const jsonOutputDetailed = document.getElementById('json-output-detailed');
-    
-    form.addEventListener('submit', (event) => {
-      event.preventDefault();
-      const hl7Message = hl7MessageInput.value;
-      caches.open("hl7-message-cache").then(function(cache) {
-            cache.put("hl7-message", new Response(hl7Message));
-        });
-      fetch('/convert/hl7/json', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ message: hl7Message }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          jsonOutput.textContent = JSON.stringify(data.original, null, 2); 
-          jsonOutputDetailed.textContent = JSON.stringify(data.detailed, null, 2); 
-        })
-        .catch((error) => {
-          alert(`Error converting HL7 message: ${error}`);
-        });
-    });
-  </script>
+  <script src="/static/app.js"></script>
 </body>
 
 </html>

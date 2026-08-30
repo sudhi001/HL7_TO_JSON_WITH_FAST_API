@@ -1,0 +1,343 @@
+{
+ "adt_lf": {
+  "detailed": {
+   "MSH": {
+    "MSH.1": {
+     "name": "Field Separator",
+     "value": "|"
+    },
+    "MSH.10": {
+     "name": "Message Control ID",
+     "value": "MSG1"
+    },
+    "MSH.11": {
+     "name": "Processing ID",
+     "value": "P"
+    },
+    "MSH.12": {
+     "name": "Version ID",
+     "value": "2.5.1"
+    },
+    "MSH.2": {
+     "name": "Encoding Characters",
+     "value": "^~\\&"
+    },
+    "MSH.3": {
+     "name": "Sending Application",
+     "value": "SEND"
+    },
+    "MSH.4": {
+     "name": "Sending Facility",
+     "value": "FAC"
+    },
+    "MSH.5": {
+     "name": "Receiving Application",
+     "value": "RECV"
+    },
+    "MSH.6": {
+     "name": "Receiving Facility",
+     "value": "RFAC"
+    },
+    "MSH.7": {
+     "name": "Date / Time of Message",
+     "value": "20240101120000"
+    },
+    "MSH.9": {
+     "name": "Message Type",
+     "value": "ADT^A01"
+    }
+   },
+   "PID": {
+    "PID.1": {
+     "name": "Set ID - Patient ID",
+     "value": "1"
+    },
+    "PID.3": {
+     "name": "Patient ID (Internal ID)",
+     "value": "MRN1^^^HOSP~MRN2"
+    },
+    "PID.5": {
+     "name": "Patient Name",
+     "value": "DOE^JOHN^Q"
+    },
+    "PID.5.1": {
+     "name": "Family Name",
+     "value": "DOE"
+    },
+    "PID.5.2": {
+     "name": "Given Name",
+     "value": "JOHN"
+    },
+    "PID.5.3": {
+     "name": "Middle Initial Or Name",
+     "value": "Q"
+    },
+    "PID.7": {
+     "name": "Date of Birth",
+     "value": "19800101"
+    },
+    "PID.8": {
+     "name": "Sex",
+     "value": "M"
+    }
+   }
+  },
+  "input": "MSH|^~\\&|SEND|FAC|RECV|RFAC|20240101120000||ADT^A01|MSG1|P|2.5.1\nPID|1||MRN1^^^HOSP~MRN2||DOE^JOHN^Q||19800101|M",
+  "original": {
+   "MSH": {
+    "MSH.1": "|",
+    "MSH.10": "MSG1",
+    "MSH.11": "P",
+    "MSH.12": "2.5.1",
+    "MSH.2": "^~\\&",
+    "MSH.3": "SEND",
+    "MSH.4": "FAC",
+    "MSH.5": "RECV",
+    "MSH.6": "RFAC",
+    "MSH.7": "20240101120000",
+    "MSH.9": "ADT^A01",
+    "MSH.9.1": "ADT",
+    "MSH.9.2": "A01"
+   },
+   "PID": {
+    "PID.1": "1",
+    "PID.3": "MRN1^^^HOSP~MRN2",
+    "PID.3.1": "MRN1",
+    "PID.3.4": "HOSP~MRN2",
+    "PID.3.4.1": "HOSP",
+    "PID.3.4.2": "MRN2",
+    "PID.5": "DOE^JOHN^Q",
+    "PID.5.1": "DOE",
+    "PID.5.2": "JOHN",
+    "PID.5.3": "Q",
+    "PID.7": "19800101",
+    "PID.8": "M"
+   }
+  }
+ },
+ "empties": {
+  "detailed": {
+   "MSH": {
+    "MSH.1": {
+     "name": "Field Separator",
+     "value": "|"
+    },
+    "MSH.10": {
+     "name": "Message Control ID",
+     "value": "M1"
+    },
+    "MSH.11": {
+     "name": "Processing ID",
+     "value": "P"
+    },
+    "MSH.12": {
+     "name": "Version ID",
+     "value": "2.5.1"
+    },
+    "MSH.2": {
+     "name": "Encoding Characters",
+     "value": "^~\\&"
+    },
+    "MSH.3": {
+     "name": "Sending Application",
+     "value": "S"
+    },
+    "MSH.4": {
+     "name": "Sending Facility",
+     "value": "F"
+    },
+    "MSH.7": {
+     "name": "Date / Time of Message",
+     "value": "20240101"
+    },
+    "MSH.9": {
+     "name": "Message Type",
+     "value": "ADT^A01"
+    }
+   },
+   "PID": {
+    "PID.1": {
+     "name": "Set ID - Patient ID",
+     "value": "A"
+    },
+    "PID.3": {
+     "name": "Patient ID (Internal ID)",
+     "value": "\"\""
+    },
+    "PID.5": {
+     "name": "Patient Name",
+     "value": "x"
+    }
+   }
+  },
+  "input": "MSH|^~\\&|S|F|||20240101||ADT^A01|M1|P|2.5.1\nPID|A||\"\"| |x",
+  "original": {
+   "MSH": {
+    "MSH.1": "|",
+    "MSH.10": "M1",
+    "MSH.11": "P",
+    "MSH.12": "2.5.1",
+    "MSH.2": "^~\\&",
+    "MSH.3": "S",
+    "MSH.4": "F",
+    "MSH.7": "20240101",
+    "MSH.9": "ADT^A01",
+    "MSH.9.1": "ADT",
+    "MSH.9.2": "A01"
+   },
+   "PID": {
+    "PID.1": "A",
+    "PID.3": "\"\"",
+    "PID.5": "x"
+   }
+  }
+ },
+ "nonhl7": {
+  "detailed": {
+   "MSH": {},
+   "PID": {}
+  },
+  "input": "hello world",
+  "original": {
+   "hello world": {}
+  }
+ },
+ "oru_multi_obx": {
+  "detailed": {
+   "MSH": {
+    "MSH.1": {
+     "name": "Field Separator",
+     "value": "|"
+    },
+    "MSH.10": {
+     "name": "Message Control ID",
+     "value": "M1"
+    },
+    "MSH.11": {
+     "name": "Processing ID",
+     "value": "P"
+    },
+    "MSH.12": {
+     "name": "Version ID",
+     "value": "2.5.1"
+    },
+    "MSH.2": {
+     "name": "Encoding Characters",
+     "value": "^~\\&"
+    },
+    "MSH.3": {
+     "name": "Sending Application",
+     "value": "S"
+    },
+    "MSH.4": {
+     "name": "Sending Facility",
+     "value": "F"
+    },
+    "MSH.7": {
+     "name": "Date / Time of Message",
+     "value": "20240101"
+    },
+    "MSH.9": {
+     "name": "Message Type",
+     "value": "ORU^R01"
+    }
+   },
+   "PID": {}
+  },
+  "input": "MSH|^~\\&|S|F|||20240101||ORU^R01|M1|P|2.5.1\nOBX|1|NM|GLU||100\nOBX|2|NM|NA||140",
+  "original": {
+   "MSH": {
+    "MSH.1": "|",
+    "MSH.10": "M1",
+    "MSH.11": "P",
+    "MSH.12": "2.5.1",
+    "MSH.2": "^~\\&",
+    "MSH.3": "S",
+    "MSH.4": "F",
+    "MSH.7": "20240101",
+    "MSH.9": "ORU^R01",
+    "MSH.9.1": "ORU",
+    "MSH.9.2": "R01"
+   },
+   "OBX": {
+    "OBX.1": "2",
+    "OBX.2": "NM",
+    "OBX.3": "NA",
+    "OBX.5": "140"
+   }
+  }
+ },
+ "trailing_nl": {
+  "detailed": {
+   "MSH": {
+    "MSH.1": {
+     "name": "Field Separator",
+     "value": "|"
+    },
+    "MSH.10": {
+     "name": "Message Control ID",
+     "value": "M1"
+    },
+    "MSH.11": {
+     "name": "Processing ID",
+     "value": "P"
+    },
+    "MSH.12": {
+     "name": "Version ID",
+     "value": "2.5.1"
+    },
+    "MSH.2": {
+     "name": "Encoding Characters",
+     "value": "^~\\&"
+    },
+    "MSH.3": {
+     "name": "Sending Application",
+     "value": "S"
+    },
+    "MSH.4": {
+     "name": "Sending Facility",
+     "value": "F"
+    },
+    "MSH.7": {
+     "name": "Date / Time of Message",
+     "value": "20240101"
+    },
+    "MSH.9": {
+     "name": "Message Type",
+     "value": "ADT^A01"
+    }
+   },
+   "PID": {
+    "PID.1": {
+     "name": "Set ID - Patient ID",
+     "value": "1"
+    },
+    "PID.3": {
+     "name": "Patient ID (Internal ID)",
+     "value": "X"
+    }
+   }
+  },
+  "input": "MSH|^~\\&|S|F|||20240101||ADT^A01|M1|P|2.5.1\nPID|1||X\n",
+  "original": {
+   "": {},
+   "MSH": {
+    "MSH.1": "|",
+    "MSH.10": "M1",
+    "MSH.11": "P",
+    "MSH.12": "2.5.1",
+    "MSH.2": "^~\\&",
+    "MSH.3": "S",
+    "MSH.4": "F",
+    "MSH.7": "20240101",
+    "MSH.9": "ADT^A01",
+    "MSH.9.1": "ADT",
+    "MSH.9.2": "A01"
+   },
+   "PID": {
+    "PID.1": "1",
+    "PID.3": "X"
+   }
+  }
+ }
+}

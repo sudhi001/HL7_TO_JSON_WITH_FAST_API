@@ -6,12 +6,18 @@
     "configurations": [
         {
             "name": "Python: FastAPI",
-            "type": "python",
+            "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
+            // --reload-dir keeps the file watcher off .git/, .venv/ and __pycache__,
+            // which otherwise roughly doubles startup time.
             "args": [
                 "main:app",
-                "--reload"
+                "--reload",
+                "--reload-dir",
+                "src",
+                "--reload-dir",
+                "templates"
             ],
             "jinja": true,
             "justMyCode": true
