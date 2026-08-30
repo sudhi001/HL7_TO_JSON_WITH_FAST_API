@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 700" width="940" height="700" font-family="-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#9198a1"/>
+    </marker>
+    <marker id="arrowAccent" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#4493f8"/>
+    </marker>
+  </defs>
+
+  <rect width="940" height="700" fill="#0d1117"/>
+
+  <!-- ===== Runtime zone ===== -->
+  <rect x="20" y="20" width="900" height="446" rx="10" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
+  <text x="40" y="48" font-size="14" font-weight="700" fill="#3fb950">RUNTIME</text>
+  <text x="120" y="48" font-size="13" fill="#9198a1">on your machine &#183; no outbound network &#183; nothing written to disk</text>
+
+  <!-- Browser -->
+  <rect x="46" y="72" width="196" height="92" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+  <text x="62" y="98" font-size="14" font-weight="600" fill="#e6edf3">Browser</text>
+  <text x="62" y="120" font-size="12" fill="#9198a1">Paste a message, or pick</text>
+  <text x="62" y="137" font-size="12" fill="#9198a1">one of 12 samples.</text>
+  <text x="62" y="155" font-size="11.5" fill="#3fb950">No PHI stored client-side.</text>
+
+  <!-- Arrows browser <-> api -->
+  <line x1="248" y1="102" x2="392" y2="102" stroke="#4493f8" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+  <text x="252" y="95" font-size="11" fill="#4493f8">POST /api/v2/parse</text>
+  <line x1="392" y1="136" x2="248" y2="136" stroke="#9198a1" stroke-width="1.4" marker-end="url(#arrow)"/>
+  <text x="252" y="153" font-size="11" fill="#9198a1">JSON + diagnostics</text>
+
+  <!-- FastAPI -->
+  <rect x="398" y="72" width="212" height="92" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+  <text x="414" y="98" font-size="14" font-weight="600" fill="#e6edf3">FastAPI</text>
+  <text x="414" y="120" font-size="12" fill="#9198a1">Pydantic-validated input,</text>
+  <text x="414" y="137" font-size="12" fill="#9198a1">1 MB cap, strict CSP,</text>
+  <text x="414" y="154" font-size="12" fill="#9198a1">no message body in logs.</text>
+
+  <!-- down arrow -->
+  <line x1="504" y1="166" x2="504" y2="200" stroke="#9198a1" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+  <!-- Parsing pipeline -->
+  <rect x="46" y="206" width="404" height="238" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+  <text x="62" y="232" font-size="14" font-weight="600" fill="#e6edf3">Parsing pipeline</text>
+
+  <text x="62" y="260" font-size="12" font-weight="600" fill="#4493f8">1 &#183; Preprocess</text>
+  <text x="62" y="277" font-size="11.5" fill="#9198a1">Strip MLLP framing, normalise CR/CRLF/LF,</text>
+  <text x="62" y="293" font-size="11.5" fill="#9198a1">detect batch envelopes, resolve version.</text>
+
+  <text x="62" y="319" font-size="12" font-weight="600" fill="#4493f8">2 &#183; Tokenise</text>
+  <text x="62" y="336" font-size="11.5" fill="#9198a1">Delimiters read from MSH-1/MSH-2.</text>
+  <text x="62" y="352" font-size="11.5" fill="#9198a1">segment &#8594; field &#8594; repetition &#8594; component</text>
+  <text x="62" y="368" font-size="11.5" fill="#9198a1">&#8594; subcomponent, escapes decoded.</text>
+
+  <text x="62" y="394" font-size="12" font-weight="600" fill="#4493f8">3 &#183; Annotate &#183; 4 &#183; Validate</text>
+  <text x="62" y="411" font-size="11.5" fill="#9198a1">Field names, decoded codes, and findings</text>
+  <text x="62" y="427" font-size="11.5" fill="#9198a1">ranked error / warning / info.</text>
+
+  <!-- lookups arrow -->
+  <line x1="456" y1="300" x2="504" y2="300" stroke="#4493f8" stroke-width="1.6" marker-end="url(#arrowAccent)"/>
+  <text x="430" y="290" font-size="11" fill="#4493f8">lookups</text>
+
+  <!-- Definition store -->
+  <rect x="510" y="206" width="384" height="238" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+  <text x="526" y="232" font-size="14" font-weight="600" fill="#e6edf3">Definition store</text>
+  <text x="526" y="254" font-size="11.5" fill="#9198a1">SQLite, 2.8 MB, read-only, opened lazily.</text>
+
+  <rect x="526" y="268" width="352" height="70" rx="6" fill="#161b22" stroke="#30363d" stroke-width="1"/>
+  <text x="540" y="288" font-size="11.5" fill="#e6edf3">HL7 v2.1 &#8211; v2.7.1</text>
+  <text x="540" y="306" font-size="11.5" fill="#9198a1">1,276 segments &#183; 17,654 fields &#183; 787 datatypes</text>
+  <text x="540" y="324" font-size="11.5" fill="#9198a1">394 code tables &#183; 5,021 coded values</text>
+
+  <text x="526" y="360" font-size="11.5" fill="#3fb950">PID-8 &#8220;M&#8221; &#8594; Administrative Sex = Male</text>
+  <text x="526" y="379" font-size="11.5" fill="#3fb950">PV1-2 &#8220;I&#8221; &#8594; Patient Class = Inpatient</text>
+  <text x="526" y="406" font-size="11.5" fill="#9198a1">connect() does no I/O until the first query,</text>
+  <text x="526" y="422" font-size="11.5" fill="#9198a1">so startup stays flat (~0.3 s).</text>
+
+  <!-- ===== Build zone ===== -->
+  <line x1="686" y1="466" x2="686" y2="512" stroke="#9198a1" stroke-width="1.4" stroke-dasharray="4 3" marker-start="url(#arrow)"/>
+  <text x="700" y="494" font-size="11" fill="#9198a1">built once, offline</text>
+
+  <rect x="20" y="518" width="900" height="160" rx="10" fill="#1c1a12" stroke="#30363d" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="40" y="546" font-size="14" font-weight="700" fill="#d29922">BUILD TIME</text>
+  <text x="146" y="546" font-size="13" fill="#9198a1">run once by you &#183; never during a request</text>
+
+  <rect x="46" y="566" width="236" height="88" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+  <text x="62" y="590" font-size="13" font-weight="600" fill="#e6edf3">hl7-dictionary (MIT)</text>
+  <text x="62" y="610" font-size="11.5" fill="#9198a1">Bundled source of field names,</text>
+  <text x="62" y="626" font-size="11.5" fill="#9198a1">datatypes and code tables.</text>
+  <text x="62" y="644" font-size="11.5" fill="#3fb950">Redistributable.</text>
+
+  <line x1="288" y1="610" x2="348" y2="610" stroke="#9198a1" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+  <rect x="354" y="566" width="246" height="88" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+  <text x="370" y="590" font-size="13" font-weight="600" fill="#e6edf3">tools/build_defs_db.py</text>
+  <text x="370" y="610" font-size="11.5" fill="#9198a1">make defs</text>
+  <text x="370" y="628" font-size="11.5" fill="#9198a1">Pure Python; no Node required.</text>
+  <text x="370" y="646" font-size="11.5" fill="#9198a1">Reproducible, checked in CI.</text>
+
+  <line x1="606" y1="610" x2="666" y2="610" stroke="#9198a1" stroke-width="1.4" marker-end="url(#arrow)"/>
+
+  <rect x="672" y="566" width="222" height="88" rx="8" fill="#0d1117" stroke="#30363d" stroke-width="1.5"/>
+  <text x="688" y="590" font-size="13" font-weight="600" fill="#e6edf3">data/hl7defs.sqlite3</text>
+  <text x="688" y="610" font-size="11.5" fill="#9198a1">Committed, 2.8 MB.</text>
+  <text x="688" y="628" font-size="11.5" fill="#9198a1">Optional Caristix enrichment</text>
+  <text x="688" y="646" font-size="11.5" fill="#9198a1">is opt-in and never committed.</text>
+</svg>
