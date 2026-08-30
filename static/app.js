@@ -195,19 +195,40 @@ for (const [id, shape] of [["tab-canonical", "canonical"], ["tab-simple", "simpl
 
 // --- Samples ---------------------------------------------------------------
 
+function sampleLoadFailed(reason) {
+  // Silently leaving the dropdown empty gives the user nothing to act on.
+  // The tool still works without samples, so this is a note, not an error.
+  const placeholder = sampleSelect.options[0];
+  if (placeholder) placeholder.textContent = "Samples unavailable";
+  sampleSelect.disabled = true;
+  const hint = sampleSelect.parentElement.querySelector(".hint");
+  if (hint) hint.textContent = reason;
+}
+
 async function loadSamples() {
   try {
     const response = await fetch("/api/v2/samples");
-    if (!response.ok) return;
-    const { samples } = await response.json();
+    if (!response.ok) {
+      sampleLoadFailed(`Could not load samples (HTTP ${response.status}). ` +
+        "Paste a message instead.");
+      return;
+    }
+    const body = await response.json();
+    const samples = body.samples || [];
+    if (samples.length === 0) {
+      sampleLoadFailed(body.problem ||
+        "The server returned no samples. Paste a message instead.");
+      return;
+    }
     for (const s of samples) {
       const option = el("option", null, s.title);
       option.value = s.id;
       option.title = s.description;
       sampleSelect.appendChild(option);
     }
-  } catch {
-    /* Samples are a convenience; the tool works without them. */
+  } catch (error) {
+    sampleLoadFailed(`Could not reach the server for samples (${error.message}). ` +
+      "Paste a message instead.");
   }
 }
 

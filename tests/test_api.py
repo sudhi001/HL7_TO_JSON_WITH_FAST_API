@@ -134,3 +134,22 @@ def test_legacy_endpoint_still_works_and_advertises_deprecation(client):
     assert "sunset" in r.headers
     assert 'rel="successor-version"' in r.headers["link"]
     assert set(r.json()) == {"original", "detailed"}
+
+
+def test_empty_sample_library_explains_itself(client, monkeypatch, tmp_path):
+    """An empty dropdown must be diagnosable.
+
+    An empty list with HTTP 200 looks identical to a working-but-empty library,
+    which leaves a user with nothing to act on.
+    """
+    from app import samples
+
+    monkeypatch.setattr(samples, "SAMPLES_DIR", tmp_path / "missing")
+    samples.all_samples.cache_clear()
+    try:
+        body = client.get("/api/v2/samples").json()
+        assert body["samples"] == []
+        assert "problem" in body
+        assert str(tmp_path / "missing") in body["problem"]
+    finally:
+        samples.all_samples.cache_clear()

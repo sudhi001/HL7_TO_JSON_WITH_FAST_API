@@ -7,7 +7,7 @@ from typing import Any
 from fastapi import APIRouter, HTTPException, Query
 
 from ..parsing.parser import NotAnHL7Message, parse
-from ..samples import all_samples, get as get_sample
+from ..samples import all_samples, directory_status, get as get_sample
 from ..defs import store
 from ..render import annotated, canonical, simple
 from ..validate import validate as run_validation
@@ -100,12 +100,18 @@ def validate_message(payload: ParseRequest) -> dict[str, Any]:
 
 @router.get("/samples", summary="List the bundled sample messages")
 def list_samples() -> dict[str, Any]:
-    return {
+    samples = all_samples()
+    body: dict[str, Any] = {
         "samples": [
             {"id": s.id, "title": s.title, "description": s.description}
-            for s in all_samples()
+            for s in samples
         ]
     }
+    if not samples:
+        # An empty list with HTTP 200 is indistinguishable from a working but
+        # empty library, which makes an empty dropdown impossible to diagnose.
+        body["problem"] = directory_status() or "The sample library is empty."
+    return body
 
 
 @router.get("/samples/{sample_id}", summary="Fetch one sample message")
