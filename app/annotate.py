@@ -39,8 +39,6 @@ def _table_id(field_def, component_def, component_index: int) -> str | None:
 
 def _annotate_component(
     version: str,
-    segment_id: str,
-    position: int,
     component,
     component_def,
     field_def,
@@ -128,8 +126,6 @@ def annotate_segment(version: str, segment: Segment) -> dict[str, Any]:
                     "components": [
                         _annotate_component(
                             version,
-                            segment.id,
-                            field.position,
                             component,
                             components[component.index - 1]
                             if component.index - 1 < len(components) and not literal

@@ -21,6 +21,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: pip install -r requirements-dev.txt
+      - run: ruff check .
       - run: pytest -q
       - name: Definitions must not load at import
         run: |

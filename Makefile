@@ -4,6 +4,7 @@ help:
 	@echo "install       Install runtime + dev dependencies"
 	@echo "dev           Run the app (no --reload; see README for dev mode)"
 	@echo "test          Run the test suite"
+	@echo "lint          Run ruff"
 	@echo "defs          Rebuild data/hl7defs.sqlite3 from hl7-dictionary"
 	@echo "bench-startup Show what import actually costs"
 	@echo "clean         Remove caches and build inputs"
@@ -16,6 +17,9 @@ dev:
 
 test:
 	pytest -q
+
+lint:
+	ruff check .
 
 defs:
 	python tools/build_defs_db.py

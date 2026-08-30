@@ -5,7 +5,6 @@
    parsing must never depend on definitions being present.
 """
 
-from pathlib import Path
 
 import pytest
 

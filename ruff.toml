@@ -1,0 +1,14 @@
+line-length = 100
+
+[lint]
+select = ["F", "E", "W", "B", "SIM", "RUF", "ARG", "PIE", "C4", "RET", "UP"]
+ignore = [
+    "E501",    # line length is handled by the formatter
+    "RET504",  # a named return value is often clearer
+    "SIM108",  # ternaries are not always more readable
+    "B008",    # FastAPI's Depends/Query idiom requires calls in defaults
+]
+
+[lint.per-file-ignores]
+# Handler signatures are fixed by the framework, not by us.
+"main.py" = ["ARG001"]

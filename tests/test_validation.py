@@ -199,3 +199,25 @@ def test_errors_are_listed_before_warnings_and_info():
 def test_validation_never_raises_on_hostile_input():
     for text in (VALID_ADT, f"{hdr()}\rPID|" + "|" * 200 + "\r", f"{hdr()}\rQQQ|1\r"):
         validate(parse(text))
+
+
+@requires_store
+def test_length_check_counts_separators_not_just_values():
+    """Regression: separators count toward an HL7 length limit.
+
+    Summing only the values let an over-long field through: five 4-character
+    components is 20 characters of data but 24 on the wire, and PID-2 allows 20.
+    """
+    over = "^".join(["abcd"] * 5)
+    found = validate(parse(f"{hdr()}\rEVN|A01|20240115143000\r"
+                           f"PID|1|{over}|MRN1||SMITH^JOHN||19800315|M\r"
+                           "PV1|1|I|2000\r"))
+    assert any(d.code == "HL7W011" and "24 characters" in d.message for d in found)
+
+
+@requires_store
+def test_length_check_does_not_fire_on_a_value_that_fits():
+    found = validate(parse(f"{hdr()}\rEVN|A01|20240115143000\r"
+                           "PID|1|abcd^abcd|MRN1||SMITH^JOHN||19800315|M\r"
+                           "PV1|1|I|2000\r"))
+    assert not [d for d in found if d.code == "HL7W011"]

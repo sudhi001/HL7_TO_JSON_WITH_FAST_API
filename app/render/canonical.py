@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from ..parsing.models import Message, Presence
+from ..parsing.models import Message
 
 SCHEMA_VERSION = 2
 
@@ -24,6 +24,12 @@ def render(message: Message) -> dict[str, Any]:
         "schemaVersion": SCHEMA_VERSION,
         "meta": {
             "version": message.meta.version,
+            **(
+                {"declaredVersion": message.meta.declared_version}
+                if message.meta.declared_version
+                and message.meta.declared_version != message.meta.version
+                else {}
+            ),
             "messageType": message.meta.message_type,
             "controlId": message.meta.control_id,
             "delimiters": {

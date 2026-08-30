@@ -17,6 +17,21 @@ def _first_sub(field):
     return None
 
 
+def _encoded_length(repetition) -> int:
+    """Length of one repetition as it appears on the wire.
+
+    The separators count toward an HL7 length limit, so they have to be counted:
+    a component separator between each component, and a subcomponent separator
+    between each subcomponent. Summing the values alone under-reports, which
+    silently lets over-long fields through.
+    """
+    total = 0
+    for component in repetition.components:
+        total += sum(len(sub.raw) for sub in component.subs)
+        total += max(len(component.subs) - 1, 0)
+    return total + max(len(repetition.components) - 1, 0)
+
+
 def _has_content(field) -> bool:
     for rep in field.reps:
         for component in rep.components:
@@ -68,15 +83,19 @@ def check(message: Message) -> list[Diagnostic]:
             path = field_path(segment, counts[segment.id], field_def.position)
             field = present.get(field_def.position)
 
-            if field_def.required and key not in _SYNTHESISED:
-                if field is None or not _has_content(field):
-                    found.append(
-                        Diagnostic(
-                            Severity.ERROR, "HL7E010",
-                            f"{path} ({field_def.name}) is required but empty.",
-                            path=path,
-                        )
+            missing_required = (
+                field_def.required
+                and key not in _SYNTHESISED
+                and (field is None or not _has_content(field))
+            )
+            if missing_required:
+                found.append(
+                    Diagnostic(
+                        Severity.ERROR, "HL7E010",
+                        f"{path} ({field_def.name}) is required but empty.",
+                        path=path,
                     )
+                )
 
             if field is None:
                 continue
@@ -93,13 +112,7 @@ def check(message: Message) -> list[Diagnostic]:
 
             if field_def.length:
                 for rep in field.reps:
-                    raw = max(
-                        (len(sub.raw) for comp in rep.components for sub in comp.subs),
-                        default=0,
-                    )
-                    total = sum(
-                        len(sub.raw) for comp in rep.components for sub in comp.subs
-                    ) + max(len(rep.components) - 1, 0)
+                    total = _encoded_length(rep)
                     if total > field_def.length:
                         found.append(
                             Diagnostic(

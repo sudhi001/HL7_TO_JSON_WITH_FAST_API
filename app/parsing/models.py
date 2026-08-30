@@ -90,7 +90,10 @@ class Segment:
 
 @dataclass
 class MessageMeta:
+    #: The version used for lookups -- resolved to one the definition store has.
     version: str | None = None
+    #: What MSH-12 actually said, when that differs from `version`.
+    declared_version: str | None = None
     message_type: str | None = None
     control_id: str | None = None
     delimiters: Delimiters = field(default_factory=Delimiters)

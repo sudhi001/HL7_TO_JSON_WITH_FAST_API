@@ -74,7 +74,7 @@ def validate(message: Message) -> list[Diagnostic]:
     ):
         try:
             found.extend(check(message))
-        except Exception:  # noqa: BLE001 - a broken check must not break parsing
+        except Exception:  # a broken check must never break parsing
             continue
 
     found = _collapse(_deduplicate(found))

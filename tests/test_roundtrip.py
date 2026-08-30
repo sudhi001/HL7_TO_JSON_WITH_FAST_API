@@ -9,9 +9,9 @@ import pytest
 from app.parsing.parser import parse, serialize
 from tests.conftest import SAMPLES, hdr, read_sample
 
-# Version is rewritten when MSH-12 is unsupported, so this one cannot round-trip
-# byte-for-byte by design.
-VERSION_REWRITTEN = {"edge_malformed.hl7"}
+# Every sample round-trips. Nothing is excluded: the parser no longer rewrites
+# MSH-12 when the declared version is unsupported, so even edge_malformed.hl7
+# comes back byte-identical.
 
 
 @pytest.mark.parametrize(
@@ -32,7 +32,7 @@ def test_round_trips_byte_for_byte(message):
 
 @pytest.mark.parametrize(
     "name",
-    sorted(p.name for p in SAMPLES.glob("*.hl7") if p.name not in VERSION_REWRITTEN),
+    sorted(p.name for p in SAMPLES.glob("*.hl7")),
 )
 def test_every_sample_round_trips(name):
     raw = read_sample(name).strip("\r")

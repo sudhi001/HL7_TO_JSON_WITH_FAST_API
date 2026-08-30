@@ -62,11 +62,18 @@ def _strip_mllp(text: str, diags: list[Diagnostic]) -> tuple[str, str]:
 
 
 def _normalise_terminators(text: str, diags: list[Diagnostic]) -> tuple[str, str]:
-    """Normalise segment terminators to ``\\r``.
+    """Normalise every segment terminator to ``\\r``.
 
-    The HL7 segment terminator is a carriage return. A message using LF parses to
-    a single segment if taken literally, which is the failure this fixes.
+    The HL7 terminator is a carriage return. Messages arrive with CR, CRLF, LF,
+    and -- when a file has been edited or concatenated by different tools -- a
+    mixture. Each variant is converted and reported.
+
+    Every LF must become a terminator, never be deleted: dropping one silently
+    joins two segments into one, which is data loss that still returns HTTP 200.
     """
+    had_cr = "\r" in text
+    observed = "\r"
+
     if "\r\n" in text:
         observed = "\r\n"
         text = text.replace("\r\n", "\r")
@@ -78,20 +85,32 @@ def _normalise_terminators(text: str, diags: list[Diagnostic]) -> tuple[str, str
                 "treated as CR.",
             )
         )
-    elif "\r" not in text and "\n" in text:
-        observed = "\n"
-        text = text.replace("\n", "\r")
-        diags.append(
-            Diagnostic(
-                Severity.WARNING,
-                "HL7W002",
-                "Segments were separated by LF. The HL7 terminator is CR; treated "
-                "as CR. Messages from a real interface will use CR.",
+
+    if "\n" in text:
+        if had_cr:
+            # Both terminators in one message: something concatenated it, and
+            # the LF-separated segments are real segments.
+            observed = "mixed"
+            diags.append(
+                Diagnostic(
+                    Severity.WARNING,
+                    "HL7W007",
+                    "The message mixes CR and LF segment terminators. Every line "
+                    "break was treated as a segment terminator.",
+                )
             )
-        )
-    else:
-        observed = "\r"
-        text = text.replace("\n", "")
+        else:
+            observed = "\n"
+            diags.append(
+                Diagnostic(
+                    Severity.WARNING,
+                    "HL7W002",
+                    "Segments were separated by LF. The HL7 terminator is CR; treated "
+                    "as CR. Messages from a real interface will use CR.",
+                )
+            )
+        text = text.replace("\n", "\r")
+
     return text, observed
 
 
@@ -159,21 +178,6 @@ def _detect_version(
     return DEFAULT_VERSION, (declared or None)
 
 
-def _force_version(text: str, delims: Delimiters, version: str) -> str:
-    """Rewrite MSH-12 so hl7apy will accept the message.
-
-    hl7apy raises ``UnsupportedVersion`` rather than falling back, and offers no
-    version override on ``parse_message``, so the substitution has to happen in
-    the text. Only the header line is touched.
-    """
-    head, sep, rest = text.partition("\r")
-    parts = head.split(delims.field)
-    while len(parts) <= 11:
-        parts.append("")
-    parts[11] = version
-    return delims.field.join(parts) + sep + rest
-
-
 def detect_framing(text: str) -> str:
     first = text.split("\r", 1)[0][:3]
     if first in BATCH_HEADERS:
@@ -202,8 +206,10 @@ def preprocess(raw: str) -> Preprocessed:
 
     delims = extract_delimiters(text, diags)
     version, declared = _detect_version(text, delims, diags)
-    if declared != version:
-        text = _force_version(text, delims, version)
+    # The message text is never rewritten. An earlier version substituted MSH-12
+    # so hl7apy would accept it, which discarded the rest of the VID
+    # ("9.9^ISO^1" became "2.5") and reported a value the sender never
+    # transmitted. The resolved version is metadata; the message stays as sent.
 
     return Preprocessed(
         text=text,

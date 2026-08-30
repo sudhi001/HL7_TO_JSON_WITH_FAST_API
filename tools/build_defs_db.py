@@ -78,7 +78,9 @@ def load_js(path: Path) -> dict:
 
 
 def build(connection: sqlite3.Connection) -> dict[str, int]:
-    counts = {k: 0 for k in ("segment", "field", "datatype", "component", "table", "code", "event")}
+    counts = dict.fromkeys(
+        ("segment", "field", "datatype", "component", "table", "code", "event"), 0
+    )
 
     tables = load_js(VENDOR / "tables.js")
 

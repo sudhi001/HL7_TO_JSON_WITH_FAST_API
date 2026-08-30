@@ -4,7 +4,6 @@ Before the rewrite, a conformant CR-delimited message collapsed into a single
 MSH segment and returned HTTP 200 with wrong data.
 """
 
-import pytest
 
 from app.parsing.parser import parse
 from tests.conftest import hdr
@@ -52,3 +51,23 @@ def test_mllp_framing_is_stripped_and_reported():
     assert [s.id for s in message.segments] == ["MSH", "PID"]
     assert message.meta.framing == "mllp"
     assert any(d.code == "HL7I001" for d in message.diagnostics)
+
+
+def test_a_lone_lf_among_cr_terminators_is_not_swallowed():
+    """Regression: a mixed-terminator message silently lost a segment.
+
+    A file edited or concatenated by different tools can carry both. The LF used
+    to be deleted rather than treated as a terminator, which joined two segments
+    into one and still returned HTTP 200 -- exactly the silent data loss this
+    parser exists to avoid.
+    """
+    message = parse(f"{hdr()}\rPID|1||MRN1\nOBX|1|NM|GLU||100\r")
+    assert [s.id for s in message.segments] == ["MSH", "PID", "OBX"]
+    assert any(d.code == "HL7W007" for d in message.diagnostics)
+
+
+def test_mixed_terminators_do_not_merge_field_values():
+    message = parse(f"{hdr()}\rPID|1||MRN1\nNK1|1|DOE^JANE\r")
+    pid = next(s for s in message.segments if s.id == "PID")
+    field3 = next(f for f in pid.fields if f.position == 3)
+    assert field3.reps[0].components[0].subs[0].value == "MRN1"

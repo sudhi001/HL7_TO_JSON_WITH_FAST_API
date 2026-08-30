@@ -220,6 +220,7 @@ def parse(raw_message: str) -> Message:
     header = segments[0]
     meta = MessageMeta(
         version=pre.version,
+        declared_version=pre.declared_version,
         message_type=_raw_field(header, 9, delims),
         control_id=_first_value(header, 10),
         delimiters=delims,

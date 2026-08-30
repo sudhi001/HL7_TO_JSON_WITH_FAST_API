@@ -12,6 +12,7 @@ Two rules hold this together, and ``tests/test_defs_store.py`` enforces both:
 
 from __future__ import annotations
 
+import contextlib
 import json
 import sqlite3
 import threading
@@ -239,10 +240,8 @@ def reset_for_tests() -> None:
     global _unavailable
     _unavailable = False
     if hasattr(_local, "connection"):
-        try:
+        with contextlib.suppress(sqlite3.Error):
             _local.connection.close()
-        except sqlite3.Error:
-            pass
         del _local.connection
     for fn in (
         metadata, versions, segment_def, field_def, segment_fields, datatype_def,
