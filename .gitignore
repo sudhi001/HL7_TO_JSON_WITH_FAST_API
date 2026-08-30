@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Caches
+.cache/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Definition store artifacts
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+
+# Harvested third-party definition data (see docs/data-sources.md — not redistributable)
+.cache/caristix/
+
+# Editors / OS
+.DS_Store
+*.swp
+.idea/
+
+# Intermediate build inputs for the definition store (~15 MB). Only the built
+# data/hl7defs.sqlite3 is committed; rebuild with tools/build_defs_db.py
+data/vendor/
