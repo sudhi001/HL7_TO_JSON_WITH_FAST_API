@@ -33,7 +33,7 @@ It works with the network unplugged.
 
 ## Prerequisites
 
-- Python 3.11 or newer (tested through 3.14).
+- Python 3.11 or newer. Tested on 3.11, 3.12 and 3.13 in CI, and on 3.14 locally.
 
 ## Installation
 

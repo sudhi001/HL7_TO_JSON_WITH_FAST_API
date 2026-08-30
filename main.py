@@ -1,3 +1,5 @@
+import logging
+import uuid
 from datetime import date, timedelta
 from pathlib import Path
 
@@ -9,6 +11,8 @@ from fastapi.templating import Jinja2Templates
 from app.api.models import ParseRequest
 from app.api.v2 import router as v2_router
 from app.render import legacy
+
+logger = logging.getLogger("hl7")
 
 BASE_DIR = Path(__file__).resolve().parent
 
@@ -61,14 +65,27 @@ async def security_headers(request: Request, call_next):
 
 @app.exception_handler(Exception)
 async def unhandled_exception_handler(request: Request, exc: Exception) -> JSONResponse:
-    """Return a structured error rather than a traceback.
+    """Log the failure server-side; return a generic error to the client.
 
-    The exception text is deliberately not echoed to the client: it can contain
-    fragments of the submitted message, which may be PHI.
+    The exception is not echoed to the client because it can contain fragments
+    of the submitted message, which may be PHI. It *is* logged, with a
+    correlation id the client also receives, so an operator can find the
+    traceback without the user having to relay it. Swallowing it entirely --
+    as this handler previously did -- makes a 500 impossible to diagnose.
+
+    The request path is logged; the body never is.
     """
+    error_id = uuid.uuid4().hex[:12]
+    logger.exception(
+        "Unhandled error %s handling %s %s", error_id, request.method, request.url.path
+    )
     return JSONResponse(
         status_code=500,
-        content={"error": "internal_error", "detail": "Failed to process the message."},
+        content={
+            "error": "internal_error",
+            "detail": "Failed to process the request.",
+            "errorId": error_id,
+        },
     )
 
 

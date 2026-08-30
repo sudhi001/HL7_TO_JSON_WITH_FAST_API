@@ -37,9 +37,16 @@ class Sample:
 
 
 def _read(path: Path) -> str:
-    # newline="" preserves CR terminators; the default would translate them to
-    # LF and quietly turn a conformant sample into a non-conformant one.
-    return path.read_text(newline="")
+    """Read a sample without any line-ending translation.
+
+    Decoding the bytes directly is the point: text mode would apply universal
+    newlines and silently rewrite every CR terminator as LF, turning a
+    conformant sample into a non-conformant one. ``read_text(newline="")``
+    would also work, but only on Python 3.13+ -- the parameter does not exist
+    before then, and calling it raised a TypeError that surfaced as an HTTP 500
+    on 3.11 and 3.12.
+    """
+    return path.read_bytes().decode("utf-8")
 
 
 def directory_status() -> str | None:

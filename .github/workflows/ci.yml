@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # The full supported range. A version-only API (Path.read_text(newline=...)
+        # is 3.13+) once shipped as an HTTP 500 on 3.12 because nothing here
+        # exercised anything but the newest interpreter.
+        python-version: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - run: pip install -r requirements-dev.txt
+      - run: pytest -q
+      - name: Definitions must not load at import
+        run: |
+          python -c "
+          import main, sys
+          assert not [m for m in sys.modules if m.startswith('hl7apy.v2_')], 'version libs loaded at import'
+          from app.defs import store
+          assert not hasattr(store._local, 'connection'), 'definition store opened at import'
+          print('startup budget OK')
+          "
+      - name: Server starts and serves samples
+        run: |
+          python -m uvicorn main:app --port 8099 --log-level warning &
+          curl -s --retry 20 --retry-delay 1 --retry-all-errors --max-time 40 -o /dev/null http://127.0.0.1:8099/healthz
+          code=$(curl -s -o /tmp/s.json -w '%{http_code}' http://127.0.0.1:8099/api/v2/samples)
+          test "$code" = "200" || { echo "samples returned HTTP $code"; cat /tmp/s.json; exit 1; }
+          python -c "
+          import json; d = json.load(open('/tmp/s.json'))
+          assert d['samples'], d.get('problem', 'sample list is empty')
+          print(f\"{len(d['samples'])} samples served\")
+          "
