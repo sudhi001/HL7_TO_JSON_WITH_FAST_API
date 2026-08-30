@@ -123,14 +123,25 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 }
 .chip strong { color: var(--text); font-weight: 600; }
 
-.panes { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 20px; }
+/* align-items: start stops the shorter pane being stretched to the height of
+   the taller one, which left a large empty box beside long JSON. */
+.panes { display: grid; grid-template-columns: 1fr; gap: 16px; margin-top: 20px; align-items: start; }
 @media (min-width: 900px) { .panes { grid-template-columns: 1fr 1fr; } }
 
 .pane { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
 .pane-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 9px 12px; border-bottom: 1px solid var(--border); }
 .pane-head h2 { font-size: 0.86rem; margin: 0; }
 .pane-head .hint { margin: 0; }
-.pane pre { margin: 0; padding: 12px; overflow-x: auto; font-family: var(--mono); font-size: 0.78rem; line-height: 1.5; max-height: 560px; overflow-y: auto; }
+/* No max-height and no overflow-y: a scrollbar inside a scrolling page means
+   two things to scroll and neither reaches the end. Long output is capped when
+   rendered instead -- see renderJson() in app.js. Horizontal scrolling stays,
+   because a single long line must not widen the page. */
+.pane pre { margin: 0; padding: 12px; overflow-x: auto; font-family: var(--mono); font-size: 0.78rem; line-height: 1.5; }
+
+.truncated {
+  margin: 0; padding: 10px 12px; border-top: 1px solid var(--border);
+  background: var(--bg); color: var(--muted); font-size: 0.78rem;
+}
 
 .copy { background: none; border: 1px solid var(--border); color: var(--muted); padding: 3px 9px; font-size: 0.75rem; font-weight: 500; }
 .copy:hover { color: var(--accent); border-color: var(--accent); }

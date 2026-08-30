@@ -153,3 +153,26 @@ def test_empty_sample_library_explains_itself(client, monkeypatch, tmp_path):
         assert str(tmp_path / "missing") in body["problem"]
     finally:
         samples.all_samples.cache_clear()
+
+
+def test_json_pane_has_no_nested_scrollbar(client):
+    """A scrollbar inside a scrolling page means two things to scroll.
+
+    The canonical shape runs to ~3,400 lines for a five-segment message, which
+    was being crammed into a 560px box -- a 115:1 inner scroll. Long output is
+    capped when rendered instead.
+    """
+    css = client.get("/static/app.css").text
+    pane_rule = next(line for line in css.splitlines() if line.startswith(".pane pre"))
+    assert "max-height" not in pane_rule
+    assert "overflow-y" not in pane_rule
+
+
+def test_page_exposes_the_truncation_notice_and_defaults_to_simple(client):
+    body = client.get("/").text
+    assert 'id="json-truncated"' in body
+    # Simple is the readable shape and must be the selected tab on load.
+    simple_index = body.index('id="tab-simple"')
+    canonical_index = body.index('id="tab-canonical"')
+    assert simple_index < canonical_index
+    assert 'id="tab-simple" role="tab" aria-selected="true"' in body

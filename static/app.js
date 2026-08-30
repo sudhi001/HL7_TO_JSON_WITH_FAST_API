@@ -19,7 +19,7 @@ const metaBox = $("meta");
 // Last successful payloads, so switching JSON shape needs no refetch.
 let lastCanonical = null;
 let lastSimple = null;
-let jsonShape = "canonical";
+let jsonShape = "simple";
 
 const el = (tag, className, text) => {
   const node = document.createElement(tag);
@@ -42,6 +42,8 @@ function clearError() {
 function resetOutput() {
   fieldsBox.innerHTML = "";
   jsonPre.textContent = "";
+  jsonPre.fullText = "";
+  document.getElementById("json-truncated").classList.add("hidden");
   diagnosticsBox.innerHTML = "";
   metaBox.innerHTML = "";
   lastCanonical = null;
@@ -179,10 +181,41 @@ function renderFields(annotations) {
   }
 }
 
+// Rendering tens of thousands of lines into the DOM is slow and unreadable,
+// and the canonical shape reaches ~3,400 lines for a five-segment message.
+// Show a workable amount; Copy always yields the whole thing.
+const MAX_RENDERED_LINES = 300;
+
 function renderJson() {
   const payload = jsonShape === "simple" ? lastSimple : lastCanonical;
-  jsonPre.textContent = payload ? JSON.stringify(payload, null, 2) : "";
+  const note = document.getElementById("json-truncated");
+  note.classList.add("hidden");
+
+  if (!payload) {
+    jsonPre.textContent = "";
+    jsonPre.fullText = "";
+    return;
+  }
+
+  const text = JSON.stringify(payload, null, 2);
+  jsonPre.fullText = text;               // Copy reads this, not the shown text.
+
+  const lines = text.split("\n");
+  if (lines.length <= MAX_RENDERED_LINES) {
+    jsonPre.textContent = text;
+    return;
+  }
+
+  jsonPre.textContent = lines.slice(0, MAX_RENDERED_LINES).join("\n");
+  const hidden = lines.length - MAX_RENDERED_LINES;
+  note.textContent =
+    `Showing the first ${MAX_RENDERED_LINES} of ${lines.length.toLocaleString()} lines. ` +
+    `Copy gives you all ${lines.length.toLocaleString()}.`;
+  note.classList.remove("hidden");
 }
+
+$("tab-simple").setAttribute("aria-selected", "true");
+$("tab-canonical").setAttribute("aria-selected", "false");
 
 for (const [id, shape] of [["tab-canonical", "canonical"], ["tab-simple", "simple"]]) {
   $(id).addEventListener("click", () => {
@@ -260,7 +293,8 @@ $("clear").addEventListener("click", () => {
 for (const button of document.querySelectorAll(".copy")) {
   button.addEventListener("click", async () => {
     try {
-      await navigator.clipboard.writeText($(button.dataset.target).textContent);
+      const target = $(button.dataset.target);
+      await navigator.clipboard.writeText(target.fullText ?? target.textContent);
       const original = button.textContent;
       button.textContent = "Copied";
       setTimeout(() => { button.textContent = original; }, 1200);
