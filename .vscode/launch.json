@@ -15,7 +15,7 @@
                 "main:app",
                 "--reload",
                 "--reload-dir",
-                "src",
+                "app",
                 "--reload-dir",
                 "templates"
             ],

@@ -42,6 +42,15 @@ def _read(path: Path) -> str:
     return path.read_text(newline="")
 
 
+def directory_status() -> str | None:
+    """Why the sample library is empty, if it is. ``None`` means it is fine."""
+    if not SAMPLES_DIR.is_dir():
+        return f"The sample directory {SAMPLES_DIR} does not exist."
+    if not any(SAMPLES_DIR.glob("*.hl7")):
+        return f"No .hl7 files were found in {SAMPLES_DIR}."
+    return None
+
+
 @lru_cache(maxsize=1)
 def all_samples() -> tuple[Sample, ...]:
     if not SAMPLES_DIR.is_dir():
